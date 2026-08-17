@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { useLocation, Link } from "react-router"
 import {
   Sliders, PhoneOff, Wallet, ZapOff, Cable, Clock,
   Monitor, Home as HomeIcon, Music2, Headphones,
@@ -18,8 +19,8 @@ import testimonial2Img from "../../imports/testimonial-2.webp"
 import testimonial3Img from "../../imports/testimonial-3.webp"
 
 /* ── Design tokens ────────────────────────────────────────────────────────── */
-const DARK_BG    = "#1C1C1C"
-const DARK_GRID  = "#232323"
+const DARK_BG    = "#080a0c"
+const DARK_GRID  = "#17191c"
 const LIGHT_BG   = "#ffffff"
 const TINTED_BG  = "#F7F6F5"
 const EASE       = "cubic-bezier(0.16, 1, 0.3, 1)"
@@ -44,6 +45,13 @@ function useScrollReveal(threshold = 0.12) {
     return () => obs.disconnect()
   }, [threshold])
   return { ref, visible }
+}
+
+function scrollToSection(id: string) {
+  return (e: React.MouseEvent) => {
+    e.preventDefault()
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
 }
 
 function revealStyle(visible: boolean, delay = 0): React.CSSProperties {
@@ -134,13 +142,13 @@ const processSteps = [
 ]
 
 const brands = [
-  { name: "Control4", domain: "control4.com" },
-  { name: "Lutron", domain: "lutron.com" },
-  { name: "Sonos", domain: "sonos.com" },
-  { name: "Savant", domain: "savant.com" },
-  { name: "Loxone", domain: "loxone.com" },
-  { name: "Sony", domain: "sony.com" },
-  { name: "Screen Research", domain: "screenresearch.com" },
+  { name: "Control4" },
+  { name: "Lutron" },
+  { name: "Sonos" },
+  { name: "Savant" },
+  { name: "Loxone" },
+  { name: "Sony" },
+  { name: "Screen Research" },
 ]
 
 const faqs = [
@@ -169,16 +177,22 @@ const faqs = [
 /* ── Reusable outlined pill button ───────────────────────────────────────── */
 function PillButton({
   href,
+  to,
   children,
   dark = true,
   type,
   className = "",
+  onClick,
+  disabled,
 }: {
   href?: string
+  to?: string
   children: React.ReactNode
   dark?: boolean
   type?: "button" | "submit"
   className?: string
+  onClick?: (e: React.MouseEvent) => void
+  disabled?: boolean
 }) {
   const [hov, setHov] = useState(false)
   const base: React.CSSProperties = dark
@@ -187,25 +201,33 @@ function PillButton({
         background: hov ? "rgba(255,255,255,0.05)" : "transparent",
         color: "#ffffff",
         transition: TRANS,
+        opacity: disabled ? 0.6 : 1,
       }
     : {
         border: `1px solid ${hov ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.2)"}`,
         background: hov ? "rgba(0,0,0,0.03)" : "transparent",
         color: "#111111",
         transition: TRANS,
+        opacity: disabled ? 0.6 : 1,
       }
 
   const cls = `inline-flex items-center gap-2.5 px-7 py-3 rounded-full font-sans font-medium text-[0.9375rem] tracking-[0.04em] cursor-pointer ${className}`
 
+  if (to) return (
+    <Link to={to} className={cls} style={base}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={onClick}>
+      {children}
+    </Link>
+  )
   if (href) return (
     <a href={href} className={cls} style={base}
-      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={onClick}>
       {children}
     </a>
   )
   return (
-    <button type={type ?? "button"} className={cls} style={base}
-      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
+    <button type={type ?? "button"} className={cls} style={base} disabled={disabled}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={onClick}>
       {children}
     </button>
   )
@@ -309,7 +331,7 @@ function PainCard({ Icon, label, quote }: { Icon: React.ElementType; label: stri
           strokeWidth={1.4}
           style={{ color: hov ? ACCENT : "rgba(255,255,255,0.35)", transition: TRANS }}
         />
-        <span className="font-sans text-[0.62rem] uppercase tracking-[0.22em]" style={{ color: "rgba(255,255,255,0.25)" }}>
+        <span className="font-sans text-[0.85rem] uppercase tracking-[0.22em]" style={{ color: hov ? ACCENT : "rgba(255,255,255,0.25)", transition: TRANS }}>
           {label}
         </span>
       </div>
@@ -329,12 +351,12 @@ function ServiceCard({ Icon, num, title, description, image, imageAlt, tags }: {
   return (
     <div
       className="overflow-hidden h-full"
-      style={{ background: TINTED_BG, transition: TRANS }}
+      style={{ background: TINTED_BG, transform: hov ? "translateY(-2px)" : "translateY(0)", transition: TRANS }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
       <div className="relative overflow-hidden" style={{ height: 224, background: DARK_BG }}>
-        <img src={image} alt={imageAlt} className="absolute inset-0 w-full h-full object-cover" style={{ opacity: 0.82 }} />
+        <img src={image} alt={imageAlt} loading="lazy" className="absolute inset-0 w-full h-full object-cover" style={{ opacity: 0.82 }} />
       </div>
       <div className="p-7 lg:p-8">
         <div className="flex items-center gap-2 mb-5">
@@ -347,7 +369,7 @@ function ServiceCard({ Icon, num, title, description, image, imageAlt, tags }: {
         </div>
         <h3
           className="font-display font-light mb-3"
-          style={{ fontSize: "clamp(1.25rem, 2vw, 1.5rem)", lineHeight: 1.25, letterSpacing: "-0.02em", color: "#111111" }}
+          style={{ fontSize: "clamp(1.25rem, 2vw, 1.5rem)", lineHeight: 1.25, letterSpacing: "-0.02em", color: hov ? ACCENT : "#111111", transition: TRANS }}
         >
           {title}
         </h3>
@@ -373,8 +395,13 @@ function ServiceCard({ Icon, num, title, description, image, imageAlt, tags }: {
 /* ── Main component ───────────────────────────────────────────────────────── */
 export default function Home() {
   const [slide, setSlide] = useState(0)
+  const [slidePaused, setSlidePaused] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [heroArrow, setHeroArrow] = useState(false)
+  const [form, setForm] = useState({ name: "", contact: "", project: "", interest: "" })
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+  const [formSubmitted, setFormSubmitted] = useState(false)
+  const location = useLocation()
 
   // scroll reveal refs
   const revPain   = useScrollReveal()
@@ -386,15 +413,39 @@ export default function Home() {
   const revCta    = useScrollReveal()
 
   useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    if (reduceMotion || slidePaused) return
     const t = setInterval(() => setSlide((s) => (s + 1) % proofSlides.length), 6000)
     return () => clearInterval(t)
-  }, [])
+  }, [slidePaused])
+
+  useEffect(() => {
+    const scrollTo = (location.state as { scrollTo?: string } | null)?.scrollTo
+    if (scrollTo) document.getElementById(scrollTo)?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }, [location.state])
+
+  function updateField(key: keyof typeof form, value: string) {
+    setForm((f) => ({ ...f, [key]: value }))
+    setFormErrors((errs) => (errs[key] ? { ...errs, [key]: "" } : errs))
+  }
+
+  function handleConsultationSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const nextErrors: Record<string, string> = {}
+    if (!form.name.trim()) nextErrors.name = "Please enter your name."
+    if (!form.contact.trim()) nextErrors.contact = "Please add a phone number or email."
+    if (!form.project.trim()) nextErrors.project = "Tell us a little about the project."
+    setFormErrors(nextErrors)
+    if (Object.keys(nextErrors).length > 0) return
+
+    setFormSubmitted(true)
+  }
 
   return (
     <>
       {/* ── 1. HERO ──────────────────────────────────────────────────────── */}
       <section
-        className="relative min-h-screen flex items-center overflow-hidden"
+        className="relative min-h-[100dvh] flex items-center overflow-hidden"
         style={{ background: DARK_BG }}
       >
         <div className="absolute inset-0 z-0">
@@ -448,6 +499,7 @@ export default function Home() {
                 }}
                 onMouseEnter={() => setHeroArrow(true)}
                 onMouseLeave={() => setHeroArrow(false)}
+                onClick={scrollToSection("consultation")}
               >
                 Book a free consultation
                 <SlideArrow hov={heroArrow} />
@@ -456,6 +508,7 @@ export default function Home() {
                 href="#work"
                 className="inline-flex items-center gap-2 px-7 py-3 rounded-full font-sans font-light text-[0.9375rem]"
                 style={{ color: "rgba(255,255,255,0.55)", transition: TRANS }}
+                onClick={scrollToSection("work")}
               >
                 View our work
               </a>
@@ -505,6 +558,7 @@ export default function Home() {
         <img
           src={secondImg}
           alt="Premium modern smart home interior with floor-to-ceiling glass and refined furnishings"
+          loading="lazy"
           className="w-full h-full object-cover object-center"
         />
       </div>
@@ -534,7 +588,7 @@ export default function Home() {
       </section>
 
       {/* ── 4. SERVICES (light) ──────────────────────────────────────────── */}
-      <section className="py-16 px-5 lg:py-24 lg:px-16" style={{ background: TINTED_BG }}>
+      <section id="services" className="py-16 px-5 lg:py-24 lg:px-16" style={{ background: TINTED_BG }}>
         <div className="max-w-[1400px] mx-auto" ref={revSvc.ref}>
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 lg:mb-12" style={revealStyle(revSvc.visible)}>
             <h2
@@ -543,7 +597,7 @@ export default function Home() {
             >
               Everything you need. Nothing you don't.
             </h2>
-            <PillButton href="#consultation" dark={false} className="shrink-0">
+            <PillButton href="#consultation" dark={false} className="shrink-0" onClick={scrollToSection("consultation")}>
               Book a consultation <ArrowRight size={13} />
             </PillButton>
           </div>
@@ -562,7 +616,7 @@ export default function Home() {
       </section>
 
       {/* ── 5. OUR PROCESS (light) ───────────────────────────────────────── */}
-      <section className="py-16 px-5 lg:py-28 lg:px-16" style={{ background: LIGHT_BG, borderTop: `1px solid ${TINTED_BG}` }}>
+      <section id="process" className="py-16 px-5 lg:py-28 lg:px-16" style={{ background: LIGHT_BG, borderTop: `1px solid ${TINTED_BG}` }}>
         <div className="max-w-[1400px] mx-auto" ref={revProc.ref}>
           <div className="mb-10 lg:mb-14" style={revealStyle(revProc.visible)}>
             <h2
@@ -584,17 +638,17 @@ export default function Home() {
             {processSteps.map(({ num, title, desc, image }, i) => (
               <div key={num} style={revealStyle(revProc.visible, i * 80)}>
                 <LightCard
-                  className="overflow-hidden h-full"
+                  className="group overflow-hidden h-full"
                   bg={LIGHT_BG}
                   initialBorder="none"
                   hoverBorder="none"
                   hoverShadow="none"
-                  lift={false}
                 >
                   <div className="relative overflow-hidden" style={{ height: 192, background: DARK_BG }}>
                     <img
                       src={image}
                       alt={title}
+                      loading="lazy"
                       className="absolute inset-0 w-full h-full object-cover"
                       style={{ opacity: 0.72 }}
                     />
@@ -610,7 +664,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="p-6">
-                    <h4 className="font-sans font-medium text-sm mb-2" style={{ color: "#111111", letterSpacing: "-0.01em" }}>
+                    <h4 className="font-sans text-[0.81rem] uppercase tracking-[0.18em] mb-2 text-[#111111] group-hover:text-accent transition-colors duration-300">
                       {title}
                     </h4>
                     <p className="font-sans font-light text-sm" style={{ lineHeight: 1.85, color: BODY_TEXT }}>
@@ -627,31 +681,45 @@ export default function Home() {
       {/* ── 6. PROJECT PROOF (dark) ──────────────────────────────────────── */}
       <section id="work" style={{ background: DARK_BG }}>
         <div className="py-12 px-5 lg:py-20 lg:px-16">
-          <div className="flex items-center gap-2 mb-5">
-            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: ACCENT }} />
-            <span className="font-sans text-[0.68rem] uppercase tracking-[0.2em]" style={{ color: "rgba(255,255,255,0.38)" }}>
-              Client projects
-            </span>
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-5">
+                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: ACCENT }} />
+                <span className="font-sans text-[0.68rem] uppercase tracking-[0.2em]" style={{ color: "rgba(255,255,255,0.38)" }}>
+                  Client projects
+                </span>
+              </div>
+              <h2
+                className="font-display font-light text-white mb-2"
+                style={{ fontSize: "clamp(2.2rem, 4vw, 3.4rem)", lineHeight: 1.1, letterSpacing: "-0.025em" }}
+              >
+                Don't take our word for it.
+              </h2>
+              <p className="font-sans font-light" style={{ fontSize: "0.9375rem", color: "rgba(255,255,255,0.3)" }}>
+                Every project below is a real home. Every quote is unsolicited.
+              </p>
+            </div>
+            <PillButton to="/portfolio" dark className="shrink-0">
+              View full portfolio <ArrowRight size={13} />
+            </PillButton>
           </div>
-          <h2
-            className="font-display font-light text-white mb-2"
-            style={{ fontSize: "clamp(2.2rem, 4vw, 3.4rem)", lineHeight: 1.1, letterSpacing: "-0.025em" }}
-          >
-            Don't take our word for it.
-          </h2>
-          <p className="font-sans font-light" style={{ fontSize: "0.9375rem", color: "rgba(255,255,255,0.3)" }}>
-            Every project below is a real home. Every quote is unsolicited.
-          </p>
         </div>
 
-        <div className="relative overflow-hidden" style={{ height: "62vh", minHeight: 460, maxHeight: 780 }}>
+        <div
+          className="relative overflow-hidden"
+          style={{ height: "62vh", minHeight: 460, maxHeight: 780 }}
+          onMouseEnter={() => setSlidePaused(true)}
+          onMouseLeave={() => setSlidePaused(false)}
+          onFocus={() => setSlidePaused(true)}
+          onBlur={() => setSlidePaused(false)}
+        >
           {proofSlides.map((s, i) => (
             <div
               key={i}
               className="absolute inset-0"
               style={{ opacity: i === slide ? 1 : 0, pointerEvents: i === slide ? "auto" : "none", transition: `opacity 1000ms ${EASE}` }}
             >
-              <img src={s.image} alt={s.alt} className="w-full h-full object-cover" />
+              <img src={s.image} alt={s.alt} loading="lazy" className="w-full h-full object-cover" />
               <div
                 className="absolute inset-0"
                 style={{ background: "linear-gradient(to top right, rgba(8,10,12,0.97) 0%, rgba(8,10,12,0.88) 30%, rgba(8,10,12,0.52) 56%, transparent 78%)" }}
@@ -709,35 +777,18 @@ export default function Home() {
         <p
           className="font-sans text-[0.6rem] uppercase tracking-[0.26em] text-center mb-9"
           style={{ color: MUTED_TEXT }}
-          {...(revBrands.visible ? {} : {})}
         >
           Certified installers for the world's leading systems
         </p>
-        <div className="flex flex-wrap justify-center items-center gap-10 max-w-[1100px] mx-auto" style={revealStyle(revBrands.visible)}>
-          {brands.map(({ name, domain }) => (
-            <div key={name} className="flex items-center justify-center h-10">
-              <img
-                src={`https://logo.clearbit.com/${domain}`}
-                alt={name}
-                className="max-h-7 max-w-[100px] w-auto object-contain"
-                style={{ filter: "grayscale(100%) brightness(0)", opacity: 0.22, transition: TRANS }}
-                onMouseEnter={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0.48" }}
-                onMouseLeave={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0.22" }}
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                  (e.currentTarget.nextSibling as HTMLElement).style.display = "block"
-                }}
-              />
-              <span className="hidden font-sans text-[0.65rem] uppercase tracking-[0.18em]" style={{ color: MUTED_TEXT }}>
-                {name}
-              </span>
-            </div>
+        <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6 max-w-[1100px] mx-auto" style={revealStyle(revBrands.visible)}>
+          {brands.map(({ name }) => (
+            <BrandMark key={name} name={name} />
           ))}
         </div>
       </section>
 
       {/* ── 8. FAQ (light) ───────────────────────────────────────────────── */}
-      <section className="py-16 px-5 lg:py-28 lg:px-16" style={{ background: LIGHT_BG }}>
+      <section id="faq" className="py-16 px-5 lg:py-28 lg:px-16" style={{ background: LIGHT_BG }}>
         <div className="max-w-[760px] mx-auto" ref={revFaq.ref}>
           <h2
             className="font-display font-light mb-10 lg:mb-14"
@@ -795,19 +846,40 @@ export default function Home() {
             straightforward conversation about what's possible in your home.
           </p>
 
-          <form className="space-y-3 text-left">
-            {[
-              { label: "Name", type: "text" },
-              { label: "Telephone / Email", type: "text" },
-              { label: "Brief Project Description", type: "text" },
-            ].map(({ label, type }) => (
-              <FormInput key={label} placeholder={label} type={type} />
-            ))}
+          <form className="space-y-3 text-left" onSubmit={handleConsultationSubmit} noValidate>
+            <FormField
+              id="cta-name"
+              label="Name"
+              value={form.name}
+              onChange={(v) => updateField("name", v)}
+              error={formErrors.name}
+              maxLength={100}
+            />
+            <FormField
+              id="cta-contact"
+              label="Telephone / Email"
+              value={form.contact}
+              onChange={(v) => updateField("contact", v)}
+              error={formErrors.contact}
+              maxLength={100}
+            />
+            <FormField
+              id="cta-project"
+              label="Brief Project Description"
+              value={form.project}
+              onChange={(v) => updateField("project", v)}
+              error={formErrors.project}
+              textarea
+              maxLength={1000}
+            />
             <div className="relative">
+              <label htmlFor="cta-interest" className="sr-only">Interest</label>
               <select
-                defaultValue=""
-                className="w-full px-0 py-3 font-sans font-light text-[0.9375rem] focus:outline-none appearance-none cursor-pointer bg-transparent"
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.28)" }}
+                id="cta-interest"
+                value={form.interest}
+                onChange={(e) => setForm((f) => ({ ...f, interest: e.target.value }))}
+                className="w-full px-0 py-3 font-sans font-light text-[0.9375rem] appearance-none cursor-pointer bg-transparent focus-visible:outline focus-visible:outline-1 focus-visible:outline-white/60 focus-visible:outline-offset-4"
+                style={{ borderBottom: "1px solid rgba(255,255,255,0.18)", color: form.interest ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.28)" }}
               >
                 <option value="" disabled>Interest</option>
                 <option value="cinema" style={{ background: "#111111", color: "white" }}>Home Cinema</option>
@@ -818,13 +890,19 @@ export default function Home() {
               <ChevronDown size={13} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "rgba(255,255,255,0.18)" }} />
             </div>
 
-            <PillButton type="button" dark className="w-full justify-center py-3.5">
-              Book Private Consultation <ArrowRight size={13} />
+            <PillButton type="submit" dark className="w-full justify-center py-3.5" disabled={formSubmitted}>
+              {formSubmitted ? "Request sent" : "Book Private Consultation"} <ArrowRight size={13} />
             </PillButton>
+
+            {formSubmitted && (
+              <p className="font-sans text-[0.8rem] text-center" style={{ color: "rgba(255,255,255,0.5)" }}>
+                Thank you — we'll be in touch within one working day.
+              </p>
+            )}
           </form>
 
-          <p className="mt-8 font-sans text-[0.6rem] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.16)" }}>
-            Or ring us directly: 0800 XXX XXXX · Monday–Friday, 9am–6pm
+          <p className="mt-8 font-sans text-[0.6rem] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.5)" }}>
+            Or ring us directly: 0800 246 8000 · Monday–Friday, 9am–6pm
           </p>
         </div>
       </section>
@@ -840,7 +918,7 @@ function NavBtn({ children, onClick, "aria-label": label }: { children: React.Re
     <button
       onClick={onClick}
       aria-label={label}
-      className="w-9 h-9 rounded-[6px] flex items-center justify-center"
+      className="w-11 h-11 rounded-[6px] flex items-center justify-center"
       style={{
         border: `1px solid ${hov ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.12)"}`,
         color: hov ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.35)",
@@ -883,32 +961,80 @@ function FaqRow({ q, a, open, onToggle, visible, delay }: { q: string; a: string
         </div>
       </button>
       <div
-        className="overflow-hidden"
+        className="grid"
         style={{
-          maxHeight: open ? "20rem" : "0",
-          paddingBottom: open ? "1.75rem" : "0",
-          transition: `max-height 500ms ${EASE}, padding-bottom 500ms ${EASE}`,
+          gridTemplateRows: open ? "1fr" : "0fr",
+          transition: `grid-template-rows 500ms ${EASE}`,
         }}
       >
-        <p className="font-sans font-light text-base" style={{ lineHeight: 1.9, color: BODY_TEXT }}>{a}</p>
+        <div className="overflow-hidden">
+          <p className="font-sans font-light text-base pb-7" style={{ lineHeight: 1.9, color: BODY_TEXT }}>{a}</p>
+        </div>
       </div>
     </div>
   )
 }
 
-function FormInput({ placeholder, type }: { placeholder: string; type: string }) {
-  const [focused, setFocused] = useState(false)
+function BrandMark({ name }: { name: string }) {
+  const [hov, setHov] = useState(false)
   return (
-    <input
-      type={type}
-      placeholder={placeholder}
-      className="w-full block px-0 py-3 font-sans font-light text-[0.9375rem] text-white placeholder-white/30 focus:outline-none bg-transparent"
-      style={{
-        borderBottom: `1px solid ${focused ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.18)"}`,
-        transition: TRANS,
-      }}
-      onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
-    />
+    <span
+      className="font-display font-light text-[1.05rem] select-none"
+      style={{ color: MUTED_TEXT, opacity: hov ? 0.9 : 0.45, letterSpacing: "0.01em", transition: TRANS }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      {name}
+    </span>
+  )
+}
+
+function FormField({
+  id,
+  label,
+  value,
+  onChange,
+  error,
+  type = "text",
+  textarea = false,
+  maxLength,
+}: {
+  id: string
+  label: string
+  value: string
+  onChange: (value: string) => void
+  error?: string
+  type?: string
+  textarea?: boolean
+  maxLength?: number
+}) {
+  const [focused, setFocused] = useState(false)
+  const shared = {
+    id,
+    value,
+    maxLength,
+    placeholder: label,
+    "aria-invalid": Boolean(error),
+    "aria-describedby": error ? `${id}-error` : undefined,
+    className:
+      "w-full block px-0 py-3 font-sans font-light text-[0.9375rem] text-white placeholder-white/30 bg-transparent focus-visible:outline focus-visible:outline-1 focus-visible:outline-white/60 focus-visible:outline-offset-4",
+    style: {
+      borderBottom: `1px solid ${error ? "rgba(248,15,15,0.65)" : focused ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.18)"}`,
+      transition: TRANS,
+    } as React.CSSProperties,
+    onFocus: () => setFocused(true),
+    onBlur: () => setFocused(false),
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(e.target.value),
+  }
+  return (
+    <div>
+      <label htmlFor={id} className="sr-only">{label}</label>
+      {textarea ? <textarea rows={3} {...shared} /> : <input type={type} {...shared} />}
+      {error && (
+        <p id={`${id}-error`} className="mt-1.5 font-sans text-[0.75rem]" style={{ color: "#ff9d9d" }}>
+          {error}
+        </p>
+      )}
+    </div>
   )
 }
