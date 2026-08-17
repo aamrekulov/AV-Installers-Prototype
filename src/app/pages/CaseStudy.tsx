@@ -18,7 +18,7 @@ export default function CaseStudy() {
     <>
       <section className="relative min-h-[70vh] flex items-end bg-[#080a0c] overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img src={project.heroImage} alt={project.title} className="w-full h-full object-cover" />
+          <img src={project.heroImage} alt={project.title} className="hero-image-animate w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#080a0c] via-[#080a0c]/50 to-[#080a0c]/10" />
         </div>
 
@@ -26,23 +26,23 @@ export default function CaseStudy() {
           <div className="max-w-[1400px] mx-auto">
             <Link
               to="/portfolio"
-              className="inline-flex items-center gap-2 font-sans text-[0.68rem] uppercase tracking-[0.18em] text-white/60 hover:text-white transition-colors duration-300 mb-8"
+              className="hero-eyebrow-animate inline-flex items-center gap-2 font-sans text-[0.68rem] uppercase tracking-[0.18em] text-white/60 hover:text-white transition-colors duration-300 mb-8"
             >
               <ArrowLeft size={13} />
               Back to Our Work
             </Link>
-            <span className="font-sans text-[0.65rem] uppercase tracking-[0.22em] text-white/60 mb-4 block">
+            <span className="hero-eyebrow-animate font-sans text-[0.65rem] uppercase tracking-[0.22em] text-white/60 mb-4 block">
               {project.category} — {project.location}
             </span>
-            <h1 className="font-display font-light text-white leading-[1.1] tracking-[-0.02em] text-[clamp(2.2rem,4.5vw,3.8rem)] max-w-[900px]">
+            <h1 className="hero-heading-animate font-display font-light text-white leading-[1.15] lg:leading-[1.1] tracking-[-0.02em] text-[1.9rem] lg:text-[clamp(2.2rem,4.5vw,3.8rem)] max-w-[900px]">
               {project.title}
             </h1>
           </div>
         </div>
       </section>
 
-      <section className="py-10 px-5 lg:px-16 bg-white border-b border-black/[0.07]">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8">
+      <section className="py-10 px-5 lg:px-16 bg-[#080a0c]">
+        <div className="max-w-[1400px] mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
           {[
             { label: "Service", value: project.facts.service },
             { label: "Location", value: project.facts.location },
@@ -50,8 +50,8 @@ export default function CaseStudy() {
             { label: "Investment", value: project.facts.investment },
           ].map(({ label, value }) => (
             <div key={label}>
-              <p className="font-sans text-[0.62rem] uppercase tracking-[0.2em] text-[#6b7280] mb-2">{label}</p>
-              <p className="font-display font-light text-[1.2rem] text-[#111111]">{value}</p>
+              <p className="font-sans text-[0.62rem] uppercase tracking-[0.2em] text-accent mb-2">{label}</p>
+              <p className="font-display font-light text-[1.2rem] text-white">{value}</p>
             </div>
           ))}
         </div>

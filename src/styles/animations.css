@@ -1,0 +1,41 @@
+/* Hero entrance — the one authored focal moment on the site.
+   Metaphor: the system powering on. Image settles from a dimmed, zoomed-in
+   state; the headline reveals via a left-to-right sweep, like a screen
+   igniting or a curtain opening. Scoped to prefers-reduced-motion: no-preference
+   so content is fully visible by default and motion is additive only. */
+
+@keyframes hero-image-settle {
+  from { transform: scale(1.08); filter: brightness(0.7); }
+  to { transform: scale(1); filter: brightness(1); }
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-sweep-reveal {
+  from { clip-path: inset(-0.15em 100% -0.25em 0); }
+  to { clip-path: inset(-0.15em 0 -0.25em 0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-image-animate {
+    animation: hero-image-settle 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .hero-eyebrow-animate {
+    animation: hero-rise 500ms cubic-bezier(0.16, 1, 0.3, 1) 150ms both;
+  }
+  .hero-heading-animate {
+    animation: hero-sweep-reveal 750ms cubic-bezier(0.16, 1, 0.3, 1) 300ms both;
+  }
+  .hero-subtext-animate {
+    animation: hero-rise 600ms cubic-bezier(0.16, 1, 0.3, 1) 600ms both;
+  }
+  .hero-cta-animate {
+    animation: hero-rise 600ms cubic-bezier(0.16, 1, 0.3, 1) 750ms both;
+  }
+  .hero-cta-animate-secondary {
+    animation: hero-rise 600ms cubic-bezier(0.16, 1, 0.3, 1) 850ms both;
+  }
+}

@@ -30,7 +30,7 @@ export default function Portfolio() {
               <button
                 key={cat}
                 onClick={() => setFilter(cat)}
-                className="px-5 py-2.5 rounded-full font-sans text-[0.75rem] uppercase tracking-[0.1em] transition-all duration-300"
+                className="px-5 py-3 rounded-full font-sans text-[0.75rem] uppercase tracking-[0.1em] transition-all duration-300"
                 style={
                   filter === cat
                     ? { background: "#111111", color: "#ffffff", border: "1px solid #111111" }
@@ -52,16 +52,16 @@ export default function Portfolio() {
                 <div className="relative h-80 overflow-hidden bg-[#141414]">
                   <img src={project.cardImage} alt={project.title} loading="lazy" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <span className="absolute top-5 left-6 font-sans text-[0.6rem] uppercase tracking-[0.15em] text-white px-3 py-1.5 rounded-full" style={{ background: "rgba(8,10,12,0.6)", backdropFilter: "blur(4px)" }}>
+                  <span className="absolute top-5 left-6 font-sans text-[0.6rem] uppercase tracking-[0.15em] text-white px-3 py-1.5" style={{ background: "rgba(8,10,12,0.48)", backdropFilter: "blur(4px)" }}>
                     {project.category}
                   </span>
-                  <span className="absolute bottom-5 left-6 font-sans text-[0.58rem] uppercase tracking-[0.2em] text-white/70">
+                  <span className="absolute bottom-4 left-5 font-sans text-[0.58rem] uppercase tracking-[0.2em] text-white/70 px-3 py-1.5 bg-transparent group-hover:bg-[rgba(8,10,12,0.44)] group-hover:text-accent transition-colors duration-300">
                     {project.location}
                   </span>
                 </div>
 
                 <div className="p-9 lg:p-11">
-                  <h3 className="font-display font-light text-[1.4rem] text-[#111111] mb-3 group-hover:text-accent transition-colors duration-300">{project.title}</h3>
+                  <h2 className="font-display font-light text-[1.4rem] text-[#111111] mb-3">{project.title}</h2>
                   <p className="text-[#374151] text-sm font-light leading-relaxed mb-6">{project.summary}</p>
                   <span className="inline-flex items-center gap-2 font-sans text-[0.68rem] uppercase tracking-[0.15em] text-[#111111] group-hover:text-accent transition-colors duration-300">
                     View case study

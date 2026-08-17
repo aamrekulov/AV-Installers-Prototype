@@ -56,21 +56,24 @@ export function CapabilitySection({
             </div>
           </div>
 
-          <div className="bg-white">
+          <div className="grid gap-1 p-1 bg-[#f8f7f4]">
             {capabilities.map(({ label, copy }, i) => (
               <div
                 key={label}
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
-                className={`px-10 lg:px-14 py-9 group transition-colors duration-300 cursor-default ${
-                  hovered === i ? "bg-[#f8f7f4]" : ""
-                } ${i < capabilities.length - 1 ? "border-b border-black/[0.07]" : ""}`}
+                onClick={() => setHovered(i)}
+                className="bg-white px-5 py-7 lg:px-14 lg:py-9 cursor-default"
               >
-                <div className="flex items-start gap-8">
-                  <span className="font-display text-[4.5rem] leading-none font-light text-[#111111]/[0.08] shrink-0 select-none">
+                <div className="flex items-start gap-4 lg:gap-8">
+                  <span
+                    className={`font-display text-[2.75rem] lg:text-[4.5rem] leading-none font-light w-1/4 lg:w-24 shrink-0 select-none transition-colors duration-300 ${
+                      hovered === i ? "text-[#111111]" : "text-[#111111]/[0.08]"
+                    }`}
+                  >
                     0{i + 1}
                   </span>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <h3
                       className={`font-sans text-[0.83rem] uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${
                         hovered === i ? "text-accent" : "text-[#111111]"

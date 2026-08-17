@@ -26,7 +26,7 @@ export function ProcessSection({
                 </div>
               </div>
               <div className="p-7 flex-1">
-                <h4 className="font-sans text-[0.81rem] uppercase tracking-[0.18em] text-[#111111] mb-3 group-hover:text-accent transition-colors duration-300">{title}</h4>
+                <h3 className="font-sans text-[0.81rem] uppercase tracking-[0.18em] text-[#111111] mb-3 group-hover:text-accent transition-colors duration-300">{title}</h3>
                 <p className="text-[#374151] text-sm font-light leading-relaxed">{desc}</p>
               </div>
             </div>

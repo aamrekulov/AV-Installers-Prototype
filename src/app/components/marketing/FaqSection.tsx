@@ -1,11 +1,11 @@
 import { useState } from "react"
 import { Plus } from "lucide-react"
 
-export function FaqSection({ heading, faqs }: { heading: string; faqs: { q: string; a: string }[] }) {
+export function FaqSection({ id, heading, faqs }: { id?: string; heading: string; faqs: { q: string; a: string }[] }) {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
   return (
-    <section className="py-16 px-5 lg:py-36 lg:px-16 bg-[#f8f7f4]">
+    <section id={id} className="py-16 px-5 lg:py-36 lg:px-16 bg-[#f8f7f4]">
       <div className="max-w-[760px] mx-auto">
         <h2 className="font-display font-light text-[clamp(2rem,3vw,2.75rem)] text-[#111111] text-center mb-10 lg:mb-16">
           {heading}

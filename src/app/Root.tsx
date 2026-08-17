@@ -96,8 +96,8 @@ export default function Root() {
       <header className="fixed top-0 left-0 right-0 z-50" style={{ transition: `background 400ms ${EASE}, backdrop-filter 400ms ${EASE}` }}>
         <div
           style={{
-            background: scrolled ? "rgba(8,10,12,0.97)" : "transparent",
-            backdropFilter: scrolled ? "blur(12px)" : "none",
+            background: (scrolled || mobileOpen) ? "rgba(8,10,12,0.97)" : "transparent",
+            backdropFilter: (scrolled || mobileOpen) ? "blur(12px)" : "none",
             transition: `background 400ms ${EASE}`,
           }}
         >
@@ -167,7 +167,7 @@ export default function Root() {
                 {/* CTA — outlined pill */}
                 <a
                   href="#consultation"
-                  className="ml-4 inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-sans font-medium text-[0.8rem] tracking-[0.06em] text-white"
+                  className="ml-4 inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-sans font-medium uppercase text-[0.8rem] tracking-[0.06em] text-white"
                   style={{
                     border: `1px solid ${ctaHov ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.22)"}`,
                     background: ctaHov ? "rgba(255,255,255,0.05)" : "transparent",
@@ -193,19 +193,21 @@ export default function Root() {
                 {mobileOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>
+          </div>
 
-            {/* Mobile menu */}
-            <div
-              id="mobile-menu"
-              className="lg:hidden grid"
-              style={{
-                gridTemplateRows: mobileOpen ? "1fr" : "0fr",
-                transition: `grid-template-rows 500ms ${EASE}`,
-                background: "rgba(8,10,12,0.98)",
-                backdropFilter: "blur(12px)",
-              }}
-            >
-              <div className="overflow-hidden">
+          {/* Mobile menu — full-width, outside the max-w container so its background spans edge to edge */}
+          <div
+            id="mobile-menu"
+            className="lg:hidden grid"
+            style={{
+              gridTemplateRows: mobileOpen ? "1fr" : "0fr",
+              transition: `grid-template-rows 500ms ${EASE}`,
+              background: "rgba(8,10,12,0.98)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <div className="overflow-hidden">
+            <div className="max-w-[1560px] mx-auto px-6 lg:px-12">
               <div className="px-2 py-6 flex flex-col gap-1">
                 <NavLink to="/home-cinema" onClick={() => setMobileOpen(false)}>Home Cinema</NavLink>
                 <NavLink to="/smart-home-automation" onClick={() => setMobileOpen(false)}>Smart Home Automation</NavLink>
@@ -247,14 +249,14 @@ export default function Root() {
 
                 <a
                   href="#consultation"
-                  className="mt-5 mx-4 inline-flex items-center justify-center px-6 py-3 rounded-full font-sans font-medium text-[0.875rem] text-white"
+                  className="mt-5 mx-4 inline-flex items-center justify-center px-6 py-3 rounded-full font-sans font-medium uppercase text-[0.875rem] text-white"
                   style={{ border: "1px solid rgba(255,255,255,0.22)" }}
                   onClick={(e) => { scrollToSection("consultation")(e); setMobileOpen(false) }}
                 >
                   Book a Consultation
                 </a>
               </div>
-              </div>
+            </div>
             </div>
           </div>
         </div>
@@ -336,7 +338,7 @@ function FooterCTA() {
   return (
     <a
       href="#consultation"
-      className="inline-flex items-center gap-2.5 px-7 py-3 rounded-full font-sans font-medium text-[0.9375rem] tracking-[0.04em] text-white"
+      className="inline-flex items-center gap-2.5 px-7 py-3 rounded-full font-sans font-medium uppercase text-[0.9375rem] tracking-[0.04em] text-white"
       style={{
         border: `1px solid ${hov ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.22)"}`,
         background: hov ? "rgba(255,255,255,0.05)" : "transparent",

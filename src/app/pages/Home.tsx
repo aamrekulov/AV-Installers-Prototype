@@ -3,8 +3,11 @@ import { useLocation, Link } from "react-router"
 import {
   Sliders, PhoneOff, Wallet, ZapOff, Cable, Clock,
   Monitor, Home as HomeIcon, Music2, Headphones,
-  Plus, ChevronLeft, ChevronRight, ArrowRight, ChevronDown,
+  ChevronLeft, ChevronRight, ArrowRight,
 } from "lucide-react"
+import { PainPointSection } from "../components/marketing/PainPointSection"
+import { FaqSection } from "../components/marketing/FaqSection"
+import { ConsultationSection } from "../components/marketing/ConsultationSection"
 import heroImg from "../../imports/hero.webp"
 import secondImg from "../../imports/second-image.webp"
 import installationImg from "../../imports/installation.webp"
@@ -20,7 +23,6 @@ import testimonial3Img from "../../imports/testimonial-3.webp"
 
 /* ── Design tokens ────────────────────────────────────────────────────────── */
 const DARK_BG    = "#080a0c"
-const DARK_GRID  = "#17191c"
 const LIGHT_BG   = "#ffffff"
 const TINTED_BG  = "#F7F6F5"
 const EASE       = "cubic-bezier(0.16, 1, 0.3, 1)"
@@ -211,7 +213,7 @@ function PillButton({
         opacity: disabled ? 0.6 : 1,
       }
 
-  const cls = `inline-flex items-center gap-2.5 px-7 py-3 rounded-full font-sans font-medium text-[0.9375rem] tracking-[0.04em] cursor-pointer ${className}`
+  const cls = `inline-flex items-center gap-2.5 px-7 py-3 rounded-full font-sans font-medium uppercase text-[0.9375rem] tracking-[0.04em] cursor-pointer ${className}`
 
   if (to) return (
     <Link to={to} className={cls} style={base}
@@ -311,37 +313,6 @@ function SlideArrow({ hov }: { hov: boolean }) {
   )
 }
 
-/* ── Pain point card with icon hover ─────────────────────────────────────── */
-function PainCard({ Icon, label, quote }: { Icon: React.ElementType; label: string; quote: string }) {
-  const [hov, setHov] = useState(false)
-  return (
-    <div
-      style={{
-        background: DARK_BG,
-        transform: hov ? "translateY(-2px)" : "translateY(0)",
-        transition: TRANS,
-      }}
-      className="p-7 lg:p-8 flex flex-col gap-7 h-full"
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-    >
-      <div className="flex items-center justify-between">
-        <Icon
-          size={18}
-          strokeWidth={1.4}
-          style={{ color: hov ? ACCENT : "rgba(255,255,255,0.35)", transition: TRANS }}
-        />
-        <span className="font-sans text-[0.85rem] uppercase tracking-[0.22em]" style={{ color: hov ? ACCENT : "rgba(255,255,255,0.25)", transition: TRANS }}>
-          {label}
-        </span>
-      </div>
-      <p className="font-display font-light italic" style={{ fontSize: "1.1rem", lineHeight: 1.68, color: "#ffffff" }}>
-        {quote}
-      </p>
-    </div>
-  )
-}
-
 /* ── Service card with icon hover ─────────────────────────────────────────── */
 function ServiceCard({ Icon, num, title, description, image, imageAlt, tags }: {
   Icon: React.ElementType; num: string; title: string; description: string;
@@ -396,21 +367,14 @@ function ServiceCard({ Icon, num, title, description, image, imageAlt, tags }: {
 export default function Home() {
   const [slide, setSlide] = useState(0)
   const [slidePaused, setSlidePaused] = useState(false)
-  const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [heroArrow, setHeroArrow] = useState(false)
-  const [form, setForm] = useState({ name: "", contact: "", project: "", interest: "" })
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
-  const [formSubmitted, setFormSubmitted] = useState(false)
   const location = useLocation()
 
   // scroll reveal refs
-  const revPain   = useScrollReveal()
   const revBridge = useScrollReveal()
   const revSvc    = useScrollReveal()
   const revProc   = useScrollReveal()
   const revBrands = useScrollReveal()
-  const revFaq    = useScrollReveal()
-  const revCta    = useScrollReveal()
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -424,23 +388,6 @@ export default function Home() {
     if (scrollTo) document.getElementById(scrollTo)?.scrollIntoView({ behavior: "smooth", block: "start" })
   }, [location.state])
 
-  function updateField(key: keyof typeof form, value: string) {
-    setForm((f) => ({ ...f, [key]: value }))
-    setFormErrors((errs) => (errs[key] ? { ...errs, [key]: "" } : errs))
-  }
-
-  function handleConsultationSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    const nextErrors: Record<string, string> = {}
-    if (!form.name.trim()) nextErrors.name = "Please enter your name."
-    if (!form.contact.trim()) nextErrors.contact = "Please add a phone number or email."
-    if (!form.project.trim()) nextErrors.project = "Tell us a little about the project."
-    setFormErrors(nextErrors)
-    if (Object.keys(nextErrors).length > 0) return
-
-    setFormSubmitted(true)
-  }
-
   return (
     <>
       {/* ── 1. HERO ──────────────────────────────────────────────────────── */}
@@ -452,7 +399,7 @@ export default function Home() {
           <img
             src={heroImg}
             alt="Premium custom home cinema with large projection screen and luxury seating"
-            className="w-full h-full object-cover object-right"
+            className="hero-image-animate w-full h-full object-cover object-right"
           />
           <div
             className="absolute inset-0"
@@ -462,7 +409,7 @@ export default function Home() {
 
         <div className="relative z-10 w-full py-20 px-5 lg:py-32 lg:px-20 xl:px-28">
           <div className="max-w-[600px]">
-            <div className="flex items-center gap-2 mb-9">
+            <div className="hero-eyebrow-animate flex items-center gap-2 mb-9">
               <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: ACCENT }} />
               <span className="font-sans text-[0.68rem] uppercase tracking-[0.2em]" style={{ color: "rgba(255,255,255,0.45)" }}>
                 Home Cinema &amp; Smart Home Specialists — London &amp; the South East
@@ -470,10 +417,8 @@ export default function Home() {
             </div>
 
             <h1
-              className="font-display font-light text-white mb-8"
+              className="hero-heading-animate font-display font-light text-white mb-8 text-[2.75rem] leading-[1.15] lg:text-[clamp(3.2rem,6vw,5.5rem)] lg:leading-[1.06]"
               style={{
-                fontSize: "clamp(3.2rem, 6vw, 5.5rem)",
-                lineHeight: 1.06,
                 letterSpacing: "-0.03em",
               }}
             >
@@ -481,7 +426,7 @@ export default function Home() {
             </h1>
 
             <p
-              className="font-sans font-light mb-12 max-w-[480px]"
+              className="hero-subtext-animate font-sans font-light mb-12 max-w-[480px]"
               style={{ fontSize: "1.0625rem", lineHeight: 1.85, color: "rgba(255,255,255,0.48)" }}
             >
               Most AV systems underdeliver — fiddly remotes, amateurish cabling, and technology
@@ -491,7 +436,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-3">
               <a
                 href="#consultation"
-                className="inline-flex items-center gap-2.5 px-7 py-3 rounded-full font-sans font-medium text-[0.9375rem] tracking-[0.04em] text-white"
+                className="hero-cta-animate inline-flex items-center gap-2.5 px-7 py-3 rounded-full font-sans font-medium uppercase text-[0.9375rem] tracking-[0.04em] text-white"
                 style={{
                   border: `1px solid ${heroArrow ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.25)"}`,
                   background: heroArrow ? "rgba(255,255,255,0.05)" : "transparent",
@@ -506,7 +451,7 @@ export default function Home() {
               </a>
               <a
                 href="#work"
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-full font-sans font-light text-[0.9375rem]"
+                className="hero-cta-animate-secondary inline-flex items-center gap-2 px-7 py-3 rounded-full font-sans font-light uppercase text-[0.9375rem]"
                 style={{ color: "rgba(255,255,255,0.55)", transition: TRANS }}
                 onClick={scrollToSection("work")}
               >
@@ -518,40 +463,7 @@ export default function Home() {
       </section>
 
       {/* ── 2. PAIN RECOGNITION (dark) ───────────────────────────────────── */}
-      <section className="py-20 px-5 lg:py-36 lg:px-16" style={{ background: DARK_BG }}>
-        <div className="max-w-[1400px] mx-auto">
-          <div ref={revPain.ref}>
-            <div className="mb-12 lg:mb-16" style={revealStyle(revPain.visible)}>
-              <div className="flex items-center gap-2 mb-6">
-                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: ACCENT }} />
-                <span className="font-sans text-[0.68rem] uppercase tracking-[0.2em]" style={{ color: "rgba(255,255,255,0.38)" }}>
-                  Common frustrations
-                </span>
-              </div>
-              <h2
-                className="font-display font-light text-white mb-4"
-                style={{ fontSize: "clamp(2.4rem, 4.5vw, 4rem)", lineHeight: 1.1, letterSpacing: "-0.025em" }}
-              >
-                Sound familiar?
-              </h2>
-              <p className="font-sans font-light max-w-[440px]" style={{ fontSize: "1rem", lineHeight: 1.85, color: "rgba(255,255,255,0.45)" }}>
-                If any of these resonate, you've come to exactly the right place.
-              </p>
-            </div>
-
-            <div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-              style={{ gap: 4, padding: 4, background: DARK_GRID }}
-            >
-              {painPoints.map(({ Icon, label, quote }, i) => (
-                <div key={label} style={revealStyle(revPain.visible, i * 80)}>
-                  <PainCard Icon={Icon} label={label} quote={quote} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <PainPointSection heading="Sound familiar?" points={painPoints} />
 
       {/* ── IMAGE STRIP ──────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden" style={{ height: "55vh", minHeight: 360 }}>
@@ -664,9 +576,9 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="p-6">
-                    <h4 className="font-sans text-[0.81rem] uppercase tracking-[0.18em] mb-2 text-[#111111] group-hover:text-accent transition-colors duration-300">
+                    <h3 className="font-sans text-[0.81rem] uppercase tracking-[0.18em] mb-2 text-[#111111] group-hover:text-accent transition-colors duration-300">
                       {title}
-                    </h4>
+                    </h3>
                     <p className="font-sans font-light text-sm" style={{ lineHeight: 1.85, color: BODY_TEXT }}>
                       {desc}
                     </p>
@@ -788,124 +700,23 @@ export default function Home() {
       </section>
 
       {/* ── 8. FAQ (light) ───────────────────────────────────────────────── */}
-      <section id="faq" className="py-16 px-5 lg:py-28 lg:px-16" style={{ background: LIGHT_BG }}>
-        <div className="max-w-[760px] mx-auto" ref={revFaq.ref}>
-          <h2
-            className="font-display font-light mb-10 lg:mb-14"
-            style={{ fontSize: "clamp(1.9rem, 3vw, 2.8rem)", letterSpacing: "-0.025em", color: "#111111", ...revealStyle(revFaq.visible) }}
-          >
-            Questions you might have
-          </h2>
-          <div>
-            {faqs.map(({ q, a }, i) => (
-              <FaqRow
-                key={i}
-                q={q}
-                a={a}
-                open={openFaq === i}
-                onToggle={() => setOpenFaq(openFaq === i ? null : i)}
-                visible={revFaq.visible}
-                delay={i * 60}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      <FaqSection id="faq" heading="Questions you might have" faqs={faqs} />
 
       {/* ── 9. FINAL CTA (dark) ──────────────────────────────────────────── */}
-      <section
-        id="consultation"
-        className="py-20 px-5 lg:py-40 lg:px-16 relative overflow-hidden"
-        style={{ background: DARK_BG }}
-        ref={revCta.ref}
-      >
-        {[360, 560, 760, 960].map((d) => (
-          <div
-            key={d}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
-            style={{ width: d, height: d, border: "1px solid rgba(255,255,255,0.025)" }}
-          />
-        ))}
-
-        <div className="relative z-10 max-w-[500px] mx-auto text-center" style={revealStyle(revCta.visible)}>
-          <div className="flex items-center justify-center gap-2 mb-9">
-            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: ACCENT }} />
-            <span className="font-sans text-[0.68rem] uppercase tracking-[0.2em]" style={{ color: "rgba(255,255,255,0.38)" }}>
-              Free consultation
-            </span>
-          </div>
-
-          <h2
-            className="font-display font-light text-white mb-6"
-            style={{ fontSize: "clamp(2.1rem, 3.5vw, 3.2rem)", lineHeight: 1.13, letterSpacing: "-0.025em" }}
-          >
-            Your home should work for you. Let's make that happen.
-          </h2>
-          <p className="font-sans font-light mb-10 max-w-[440px] mx-auto" style={{ fontSize: "1rem", lineHeight: 1.9, color: "rgba(255,255,255,0.36)" }}>
-            A free 30-minute discovery call. No obligation, no sales pitch — just a
-            straightforward conversation about what's possible in your home.
-          </p>
-
-          <form className="space-y-3 text-left" onSubmit={handleConsultationSubmit} noValidate>
-            <FormField
-              id="cta-name"
-              label="Name"
-              value={form.name}
-              onChange={(v) => updateField("name", v)}
-              error={formErrors.name}
-              maxLength={100}
-            />
-            <FormField
-              id="cta-contact"
-              label="Telephone / Email"
-              value={form.contact}
-              onChange={(v) => updateField("contact", v)}
-              error={formErrors.contact}
-              maxLength={100}
-            />
-            <FormField
-              id="cta-project"
-              label="Brief Project Description"
-              value={form.project}
-              onChange={(v) => updateField("project", v)}
-              error={formErrors.project}
-              textarea
-              maxLength={1000}
-            />
-            <div className="relative">
-              <label htmlFor="cta-interest" className="sr-only">Interest</label>
-              <select
-                id="cta-interest"
-                value={form.interest}
-                onChange={(e) => setForm((f) => ({ ...f, interest: e.target.value }))}
-                className="w-full px-0 py-3 font-sans font-light text-[0.9375rem] appearance-none cursor-pointer bg-transparent focus-visible:outline focus-visible:outline-1 focus-visible:outline-white/60 focus-visible:outline-offset-4"
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.18)", color: form.interest ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.28)" }}
-              >
-                <option value="" disabled>Interest</option>
-                <option value="cinema" style={{ background: "#111111", color: "white" }}>Home Cinema</option>
-                <option value="smart-home" style={{ background: "#111111", color: "white" }}>Smart Home Automation</option>
-                <option value="multiroom" style={{ background: "#111111", color: "white" }}>Multiroom Audio</option>
-                <option value="support" style={{ background: "#111111", color: "white" }}>System Support &amp; Rescue</option>
-              </select>
-              <ChevronDown size={13} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "rgba(255,255,255,0.18)" }} />
-            </div>
-
-            <PillButton type="submit" dark className="w-full justify-center py-3.5" disabled={formSubmitted}>
-              {formSubmitted ? "Request sent" : "Book Private Consultation"} <ArrowRight size={13} />
-            </PillButton>
-
-            {formSubmitted && (
-              <p className="font-sans text-[0.8rem] text-center" style={{ color: "rgba(255,255,255,0.5)" }}>
-                Thank you — we'll be in touch within one working day.
-              </p>
-            )}
-          </form>
-
-          <p className="mt-8 font-sans text-[0.6rem] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.5)" }}>
-            Or ring us directly: 0800 246 8000 · Monday–Friday, 9am–6pm
-          </p>
-        </div>
-      </section>
+      <ConsultationSection
+        heading="Your home should work for you. Let's make that happen."
+        description="A free 30-minute discovery call. No obligation, no sales pitch — just a straightforward conversation about what's possible in your home."
+        projectLabel="Brief Project Description"
+        interestLabel="Interest"
+        interestOptions={[
+          { value: "cinema", label: "Home Cinema" },
+          { value: "smart-home", label: "Smart Home Automation" },
+          { value: "multiroom", label: "Multiroom Audio" },
+          { value: "support", label: "System Support & Rescue" },
+        ]}
+        submitLabel="Book Private Consultation"
+        submittedLabel="Thank you — we'll be in touch within one working day."
+      />
     </>
   )
 }
@@ -932,49 +743,6 @@ function NavBtn({ children, onClick, "aria-label": label }: { children: React.Re
   )
 }
 
-function FaqRow({ q, a, open, onToggle, visible, delay }: { q: string; a: string; open: boolean; onToggle: () => void; visible: boolean; delay: number }) {
-  const [hov, setHov] = useState(false)
-  return (
-    <div style={{ borderBottom: "1px solid rgba(0,0,0,0.07)", ...revealStyle(visible, delay) }}>
-      <button
-        onClick={onToggle}
-        onMouseEnter={() => setHov(true)}
-        onMouseLeave={() => setHov(false)}
-        className="w-full flex items-center justify-between py-6 text-left gap-6"
-        aria-expanded={open}
-      >
-        <h3
-          className="font-display font-light text-[1.1rem] leading-snug"
-          style={{ color: hov || open ? "#111111" : "#111111", opacity: hov || open ? 1 : 0.85, transition: TRANS }}
-        >
-          {q}
-        </h3>
-        <div
-          className="flex-shrink-0"
-          style={{
-            color: open ? "#111111" : "rgba(0,0,0,0.28)",
-            transform: open ? "rotate(45deg)" : "rotate(0deg)",
-            transition: TRANS,
-          }}
-        >
-          <Plus size={16} strokeWidth={1.5} />
-        </div>
-      </button>
-      <div
-        className="grid"
-        style={{
-          gridTemplateRows: open ? "1fr" : "0fr",
-          transition: `grid-template-rows 500ms ${EASE}`,
-        }}
-      >
-        <div className="overflow-hidden">
-          <p className="font-sans font-light text-base pb-7" style={{ lineHeight: 1.9, color: BODY_TEXT }}>{a}</p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 function BrandMark({ name }: { name: string }) {
   const [hov, setHov] = useState(false)
   return (
@@ -989,52 +757,3 @@ function BrandMark({ name }: { name: string }) {
   )
 }
 
-function FormField({
-  id,
-  label,
-  value,
-  onChange,
-  error,
-  type = "text",
-  textarea = false,
-  maxLength,
-}: {
-  id: string
-  label: string
-  value: string
-  onChange: (value: string) => void
-  error?: string
-  type?: string
-  textarea?: boolean
-  maxLength?: number
-}) {
-  const [focused, setFocused] = useState(false)
-  const shared = {
-    id,
-    value,
-    maxLength,
-    placeholder: label,
-    "aria-invalid": Boolean(error),
-    "aria-describedby": error ? `${id}-error` : undefined,
-    className:
-      "w-full block px-0 py-3 font-sans font-light text-[0.9375rem] text-white placeholder-white/30 bg-transparent focus-visible:outline focus-visible:outline-1 focus-visible:outline-white/60 focus-visible:outline-offset-4",
-    style: {
-      borderBottom: `1px solid ${error ? "rgba(248,15,15,0.65)" : focused ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.18)"}`,
-      transition: TRANS,
-    } as React.CSSProperties,
-    onFocus: () => setFocused(true),
-    onBlur: () => setFocused(false),
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(e.target.value),
-  }
-  return (
-    <div>
-      <label htmlFor={id} className="sr-only">{label}</label>
-      {textarea ? <textarea rows={3} {...shared} /> : <input type={type} {...shared} />}
-      {error && (
-        <p id={`${id}-error`} className="mt-1.5 font-sans text-[0.75rem]" style={{ color: "#ff9d9d" }}>
-          {error}
-        </p>
-      )}
-    </div>
-  )
-}

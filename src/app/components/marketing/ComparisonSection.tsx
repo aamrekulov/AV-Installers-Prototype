@@ -37,7 +37,7 @@ export function ComparisonSection({
                 <span className="font-sans text-[0.62rem] uppercase tracking-[0.22em] text-accent mb-6 block">
                   {panel.eyebrow}
                 </span>
-                <h3 className="font-display font-light text-[2rem] text-[#111111] mb-6 leading-snug group-hover:text-accent transition-colors duration-300">
+                <h3 className="font-display font-light text-[2rem] text-[#111111] mb-6 leading-snug">
                   {panel.title}
                 </h3>
                 <p className="text-[#374151] font-light leading-[1.8] mb-10">{panel.description}</p>

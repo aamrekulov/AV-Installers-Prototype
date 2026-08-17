@@ -71,14 +71,24 @@ export default function About() {
         }
       />
 
-      <section className="py-16 px-5 lg:py-24 lg:px-16 bg-[#f8f7f4]">
+      <section className="py-16 px-5 lg:py-24 lg:px-16 bg-[#080a0c]">
         <div className="max-w-[1100px] mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4 text-center">
-          {stats.map(({ value, label }) => (
-            <div key={label}>
-              <p className="font-display font-light text-[clamp(2.2rem,4vw,3rem)] text-[#111111] mb-2">{value}</p>
-              <p className="font-sans text-[0.68rem] uppercase tracking-[0.18em] text-[#6b7280]">{label}</p>
-            </div>
-          ))}
+          {stats.map(({ value, label }) => {
+            const starIdx = value.indexOf("★")
+            return (
+              <div key={label}>
+                <p className="font-display font-light text-[clamp(2.2rem,4vw,3rem)] text-white mb-2">
+                  {starIdx === -1 ? value : (
+                    <>
+                      {value.slice(0, starIdx)}
+                      <span className="text-[0.65em]">★</span>
+                    </>
+                  )}
+                </p>
+                <p className="font-sans text-[0.68rem] uppercase tracking-[0.18em] text-accent">{label}</p>
+              </div>
+            )
+          })}
         </div>
       </section>
 
